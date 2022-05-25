@@ -15,10 +15,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Attendance',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: kColorPrimary,
-        ),
-      ),
+          colorScheme: ColorScheme.fromSwatch().copyWith(
+            primary: kColorPrimary,
+          ),
+          textTheme: textTheme),
       initialRoute: Routes.HOME_PAGE,
       onGenerateRoute: (RouteSettings settings) {
         switch (settings.name) {
@@ -28,6 +28,13 @@ class MyApp extends StatelessWidget {
             );
             break;
           default:
+            MaterialPageRoute(
+              builder: (context) => const Scaffold(
+                body: Center(
+                  child: Text('Page Not Found'),
+                ),
+              ),
+            );
         }
       },
     );
