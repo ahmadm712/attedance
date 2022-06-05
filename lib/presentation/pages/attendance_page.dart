@@ -203,7 +203,7 @@ class _AttendancePageState extends State<AttendancePage> {
                                   child: ElevatedButton(
                                     child: SizedBox(
                                       width: MediaQuery.of(context).size.width,
-                                      height: 60,
+                                      height: 40,
                                       child: Center(
                                           child: Text(
                                         "Submit",
