@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class GlobalFunction {
+class GlobalFunctions {
   static bool validate({required GlobalKey<FormState> formkey}) {
     if (formkey.currentState!.validate()) {
       return true;
