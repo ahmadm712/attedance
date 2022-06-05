@@ -27,8 +27,12 @@ class _AttendancePageState extends State<AttendancePage> {
   Future<double> distanceMeter() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var distanceInMeters = Geolocator.distanceBetween(
-      prefs.getDouble(COMPANY_LATITUDE)!,
-      prefs.getDouble(COMPANY_LONGITUDE)!,
+      prefs.getDouble(COMPANY_LATITUDE) != null
+          ? prefs.getDouble(COMPANY_LATITUDE)!
+          : 0,
+      prefs.getDouble(COMPANY_LONGITUDE) != null
+          ? prefs.getDouble(COMPANY_LONGITUDE)!
+          : 0,
       _currentPosition!.latitude,
       _currentPosition!.longitude,
     );
@@ -53,6 +57,12 @@ class _AttendancePageState extends State<AttendancePage> {
     }
 
     return await Geolocator.getCurrentPosition();
+  }
+
+  Future<String> initPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return prefs.getString(COMPANY_NAME).toString();
   }
 
   Future<Position> _getCurrentLocation() async {
@@ -86,7 +96,7 @@ class _AttendancePageState extends State<AttendancePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Attendance"),
+        title: Text("Attendance"),
       ),
       floatingActionButton: SizedBox(
         width: 150,
@@ -225,7 +235,7 @@ class _AttendancePageState extends State<AttendancePage> {
                                             GlobalFunctions.scafoldMessage(
                                                 context: context,
                                                 message:
-                                                    'Attendance sudah di pin lokasi',
+                                                    'Attendance succes, already on pin location',
                                                 color: Colors.green);
                                             Database.addItem(
                                                     time: DateTime.now(),
@@ -241,15 +251,12 @@ class _AttendancePageState extends State<AttendancePage> {
                                             GlobalFunctions.scafoldMessage(
                                               context: context,
                                               message:
-                                                  'Attendance Di Reject silahkan mendekat ke kantor',
+                                                  'Attendance Rejected, please come on office',
                                               color: Colors.red,
-                                            )
-                                                .then((value) =>
-                                                    GlobalFunctions.clearField(
-                                                        controller:
-                                                            _nameController))
-                                                .then((value) =>
-                                                    Navigator.pop(context));
+                                            );
+                                            GlobalFunctions.clearField(
+                                                controller: _nameController);
+                                            Navigator.pop(context);
                                           }
                                         });
                                       }
@@ -298,7 +305,7 @@ class _AttendancePageState extends State<AttendancePage> {
             );
           }
 
-          return Container();
+          return const Center(child: Text('No Data Avaible, add it'));
         },
       ),
     );
