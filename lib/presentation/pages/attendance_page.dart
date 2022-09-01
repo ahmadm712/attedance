@@ -1,4 +1,5 @@
 import 'package:attendance/data/models/attendance.dart';
+import 'package:attendance/injection.dart';
 import 'package:attendance/services/firestore_services.dart';
 import 'package:attendance/utils/constants.dart';
 import 'package:attendance/utils/global_functions.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:attendance/services/location_services.dart';
 
 class AttendancePage extends StatefulWidget {
   const AttendancePage({Key? key}) : super(key: key);
@@ -23,6 +25,7 @@ class _AttendancePageState extends State<AttendancePage> {
   final _nameController = TextEditingController(text: '');
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final locationServices = locator<LocationServices>();
 
   Future<double> distanceMeter() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -40,24 +43,7 @@ class _AttendancePageState extends State<AttendancePage> {
     return distanceInMeters;
   }
 
-  Future<Position> _determinatePosition() async {
-    LocationPermission permission;
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    return await Geolocator.getCurrentPosition();
-  }
+ 
 
   Future<String> initPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -66,7 +52,7 @@ class _AttendancePageState extends State<AttendancePage> {
   }
 
   Future<Position> _getCurrentLocation() async {
-    Position position = await _determinatePosition();
+    Position position = await locationServices.determinatePosition();
 
     setState(() {
       _currentPosition = position;

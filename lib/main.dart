@@ -1,3 +1,4 @@
+import 'package:attendance/injection.dart';
 import 'package:attendance/presentation/pages/attendance_page.dart';
 import 'package:attendance/presentation/pages/home_page.dart';
 import 'package:attendance/presentation/pages/master_location.dart';
@@ -11,6 +12,7 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  init();
   runApp(const MyApp());
 }
 
