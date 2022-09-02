@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
 class LocationServices {
-    Future<Position> determinatePosition() async {
-    LocationPermission permission  = await Geolocator.checkPermission();
+  Future<Position> determinatePosition() async {
+    LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
@@ -19,7 +20,24 @@ class LocationServices {
     return await Geolocator.getCurrentPosition();
   }
 
-   static Future<bool> onAreaWFO({required GeoPoint geoPointOffice,required GeoPoint geoPointAttendance}) async {
+  Future<String> getAddressFromLatLng(Position _currentPosition) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        _currentPosition.latitude,
+        _currentPosition.longitude,
+      );
+
+      Placemark place = placemarks.first;
+
+      return "${place.locality}, ${place.postalCode}, ${place.country}";
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<bool> onAreaWFO(
+      {required GeoPoint geoPointOffice,
+      required GeoPoint geoPointAttendance}) async {
     // DocumentSnapshot docData = await FirebaseAPI.getUserProfile();
     // UserProfile userProfile =
     //     UserProfile.fromJson(docData.data() as Map<String, dynamic>);

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class GlobalFunctions {
@@ -33,5 +34,13 @@ class GlobalFunctions {
 
   static clearField({required TextEditingController controller}) {
     return controller.clear();
+  }
+
+  static DateTime convertFromJson(Timestamp value) {
+    return value.toDate();
+  }
+
+  static dynamic convertToJson(DateTime value) {
+    return value.toUtc();
   }
 }

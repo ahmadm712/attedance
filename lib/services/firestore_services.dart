@@ -1,18 +1,21 @@
 import 'package:attendance/data/models/attendance.dart';
+import 'package:attendance/data/models/offices_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-final CollectionReference _mainCollection = _firestore.collection('attendance');
+final CollectionReference _attendanceCollection =
+    _firestore.collection('attendance');
+final CollectionReference _officeCollection = _firestore.collection('office');
 
 class Database {
   static String? userUid;
 
-  static Future<void> addItem({
+  static Future<void> addAttendance({
     required DateTime time,
     required String name,
     required bool isPinLocation,
   }) async {
-    DocumentReference documentReferencer = _mainCollection.doc(userUid);
+    DocumentReference documentReferencer = _attendanceCollection.doc(userUid);
 
     Map<String, dynamic> data = <String, dynamic>{
       "time": time,
@@ -26,12 +29,20 @@ class Database {
         .catchError((e) => print(e));
   }
 
+  static Future addMasterLocation(OfficesModel officesModel) async {
+    DocumentReference documentReferencer = _officeCollection.doc();
+    await documentReferencer
+        .set(officesModel.toMap())
+        .whenComplete(() => print('Succes Add Location'))
+        .catchError((e) => print(e));
+  }
+
   static Future<void> updateItem({
     required DateTime time,
     required String name,
     required bool isPinLocation,
   }) async {
-    DocumentReference documentReferencer = _mainCollection.doc(userUid);
+    DocumentReference documentReferencer = _attendanceCollection.doc(userUid);
 
     Map<String, dynamic> data = <String, dynamic>{
       "time": time,
@@ -58,7 +69,7 @@ class Database {
     required String docId,
   }) async {
     DocumentReference documentReferencer =
-        _mainCollection.doc(userUid).collection('items').doc(docId);
+        _attendanceCollection.doc(userUid).collection('items').doc(docId);
 
     await documentReferencer
         .delete()
