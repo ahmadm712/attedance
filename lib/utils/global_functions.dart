@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class GlobalFunctions {
-  static bool validate({required GlobalKey<FormState> formkey}) {
+  bool validate({required GlobalKey<FormState> formkey}) {
     if (formkey.currentState!.validate()) {
       return true;
     } else {
@@ -28,7 +28,7 @@ class GlobalFunctions {
     return MediaQuery.of(context).size;
   }
 
-  static TextTheme textTheme({required BuildContext context}) {
+  TextTheme textTheme({required BuildContext context}) {
     return Theme.of(context).textTheme;
   }
 

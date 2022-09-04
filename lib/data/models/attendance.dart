@@ -1,21 +1,37 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
+
+import 'package:attendance/utils/global_functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Attendance {
-  DateTime time;
-  String name;
-  bool isPinLocation;
+  String idUser;
+  DateTime createdTime;
+  GeoPoint? geoPoint;
+  bool isWFO;
 
   Attendance(
-      {required this.time, required this.isPinLocation, required this.name});
+      {this.idUser = '',
+      required this.createdTime,
+      this.geoPoint,
+      this.isWFO = false});
 
-  Map<String, dynamic> toJSon() =>
-      {'time': time, 'name': name, 'is_pin_location': isPinLocation};
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'idUser': idUser,
+      'createdTime': GlobalFunctions.convertToJson(createdTime),
+      'geoPoint': geoPoint,
+      'isWfo': isWFO,
+    };
+  }
 
-  factory Attendance.fromJson(Map<String, dynamic> parsedJson) {
+  factory Attendance.fromDocumentSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> doc) {
     return Attendance(
-      isPinLocation: parsedJson['is_pin_Location'],
-      name: parsedJson['name'],
-      time: (parsedJson['time'] as Timestamp).toDate(),
+      idUser: doc.data()!['idUser'],
+      createdTime: GlobalFunctions.convertFromJson(doc.data()!['createdTime']),
+      geoPoint: doc.data()!['geoPoint'],
+      isWFO: doc.data()!['isWfo'],
     );
   }
 }

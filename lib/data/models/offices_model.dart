@@ -3,17 +3,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OfficesModel {
-  GeoPoint location;
+  GeoPoint? location;
   String name;
-  String addres;
+  String? addres;
+  String id;
   OfficesModel({
-    required this.location,
+    this.location,
     required this.name,
-    required this.addres,
+    this.addres,
+    required this.id,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': id,
       'location': location,
       'name': name,
       'addres': addres,
@@ -22,9 +25,20 @@ class OfficesModel {
 
   factory OfficesModel.fromJson(Map<String, dynamic> json) {
     return OfficesModel(
+      id: json['id'],
       location: json['location'] ?? "",
       name: json['name'] ?? "",
       addres: json['addres'] ?? "",
+    );
+  }
+
+  factory OfficesModel.fromDocumentSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> doc) {
+    return OfficesModel(
+      id: doc['id'],
+      location: doc.data()!['location'],
+      addres: doc.data()!['addres'],
+      name: doc.data()!['name'],
     );
   }
 }

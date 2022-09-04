@@ -1,79 +1,57 @@
+import 'dart:developer';
+
 import 'package:attendance/data/models/attendance.dart';
 import 'package:attendance/data/models/offices_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-final CollectionReference _attendanceCollection =
+final CollectionReference<Map<String, dynamic>> _attendanceCollection =
     _firestore.collection('attendance');
-final CollectionReference _officeCollection = _firestore.collection('office');
+final CollectionReference<Map<String, dynamic>> _officeCollection =
+    _firestore.collection('office');
 
-class Database {
-  static String? userUid;
-
-  static Future<void> addAttendance({
-    required DateTime time,
-    required String name,
-    required bool isPinLocation,
-  }) async {
-    DocumentReference documentReferencer = _attendanceCollection.doc(userUid);
-
-    Map<String, dynamic> data = <String, dynamic>{
-      "time": time,
-      "name": name,
-      "is_pin_Location": isPinLocation,
-    };
-
+class FirebaseServices {
+  Future<bool> addAttendance({required Attendance attendance}) async {
+    DocumentReference documentReferencer = _attendanceCollection.doc();
+    bool isSucces = false;
     await documentReferencer
-        .set(data)
-        .whenComplete(() => print("Note item added to the database"))
-        .catchError((e) => print(e));
+        .set(attendance.toMap())
+        .whenComplete(() => isSucces = true)
+        .catchError(
+      (e) {
+        isSucces = false;
+        print(e);
+      },
+    );
+
+    return isSucces;
   }
 
-  static Future addMasterLocation(OfficesModel officesModel) async {
-    DocumentReference documentReferencer = _officeCollection.doc();
-    await documentReferencer
+  Future addMasterLocation(OfficesModel officesModel) async {
+    DocumentReference documentReferencer = _officeCollection.doc('01');
+    return await documentReferencer
         .set(officesModel.toMap())
         .whenComplete(() => print('Succes Add Location'))
         .catchError((e) => print(e));
   }
 
-  static Future<void> updateItem({
-    required DateTime time,
-    required String name,
-    required bool isPinLocation,
-  }) async {
-    DocumentReference documentReferencer = _attendanceCollection.doc(userUid);
+  Future<OfficesModel> readMasterLocation() async {
+    QuerySnapshot<Map<String, dynamic>> snapshot =
+        await _officeCollection.where('01').get();
 
-    Map<String, dynamic> data = <String, dynamic>{
-      "time": time,
-      "name": name,
-      "is_pin_Location": isPinLocation,
-    };
+    final data =
+        snapshot.docs.map((e) => OfficesModel.fromDocumentSnapshot(e)).first;
 
-    await documentReferencer
-        .update(data)
-        .whenComplete(() => print("Note item updated in the database"))
-        .catchError((e) => print(e));
+    return data;
   }
 
-  static Stream<List<Attendance>> readItems() {
-    return FirebaseFirestore.instance
-        .collection('attendance')
-        .orderBy('time')
-        .snapshots()
-        .map((snapshot) =>
-            snapshot.docs.map((e) => Attendance.fromJson(e.data())).toList());
-  }
+  Future<List<Attendance>> readListAttendance() async {
+    QuerySnapshot<Map<String, dynamic>> snapshot =
+        await _attendanceCollection.get();
 
-  static Future<void> deleteItem({
-    required String docId,
-  }) async {
-    DocumentReference documentReferencer =
-        _attendanceCollection.doc(userUid).collection('items').doc(docId);
-
-    await documentReferencer
-        .delete()
-        .whenComplete(() => print('Note item deleted from the database'))
-        .catchError((e) => print(e));
+    final data =
+        snapshot.docs.map((e) => Attendance.fromDocumentSnapshot(e)).toList();
+    log(data.toString());
+    return data;
   }
 }

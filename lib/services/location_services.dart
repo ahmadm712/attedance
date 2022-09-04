@@ -20,7 +20,7 @@ class LocationServices {
     return await Geolocator.getCurrentPosition();
   }
 
-  Future<String> getAddressFromLatLng(Position _currentPosition) async {
+  Future<String> getAddressFromLatLng(GeoPoint _currentPosition) async {
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(
         _currentPosition.latitude,
@@ -38,9 +38,6 @@ class LocationServices {
   Future<bool> onAreaWFO(
       {required GeoPoint geoPointOffice,
       required GeoPoint geoPointAttendance}) async {
-    // DocumentSnapshot docData = await FirebaseAPI.getUserProfile();
-    // UserProfile userProfile =
-    //     UserProfile.fromJson(docData.data() as Map<String, dynamic>);
     double distanceInMeter = Geolocator.distanceBetween(
         geoPointAttendance.latitude,
         geoPointAttendance.longitude,

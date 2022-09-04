@@ -13,15 +13,25 @@ class LocationInitial extends LocationState {}
 class LocationLoading extends LocationState {}
 
 class LocationSucces extends LocationState {
-  Position position;
+  OfficesModel? office;
   LocationSucces({
-    required this.position,
+    this.office,
   });
 
   @override
   List<Object> get props => [
-        position,
+        office!,
       ];
 }
 
-class LocationFailed extends LocationState {}
+class LocationFailed extends LocationState {
+  String message;
+  LocationFailed({
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [
+        message,
+      ];
+}

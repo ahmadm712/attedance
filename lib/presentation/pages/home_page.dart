@@ -1,3 +1,4 @@
+import 'package:attendance/injection.dart';
 import 'package:attendance/presentation/pages/attendance_page.dart';
 import 'package:attendance/presentation/pages/master_location.dart';
 import 'package:attendance/utils/global_functions.dart';
@@ -71,83 +72,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      // ),
-      // body: Padding(
-      //   padding: const EdgeInsets.all(16),
-      //   child: Center(
-      //     child: Row(
-      //       crossAxisAlignment: CrossAxisAlignment.center,
-      //       mainAxisAlignment: MainAxisAlignment.center,
-      //       children: [
-      //         Column(
-      //           crossAxisAlignment: CrossAxisAlignment.center,
-      //           mainAxisAlignment: MainAxisAlignment.center,
-      //           children: [
-      //             Text(
-      //               '1',
-      //               textAlign: TextAlign.center,
-      //               style: GlobalFunctions.textTheme(context: context)
-      //                   .headline3!
-      //                   .copyWith(
-      //                     color: Colors.white,
-      //                     fontSize: 20,
-      //                   ),
-      //             ),
-      //             ButtonMenu(
-      //               title: 'Master Lokasi',
-      //               icon: Icons.home,
-      //               routeName: Routes.MASTER_LOCATION_PAGE,
-      //             ),
-      //           ],
-      //         ),
-      //         const SizedBox(
-      //           width: 16,
-      //         ),
-      //         Column(
-      //           crossAxisAlignment: CrossAxisAlignment.center,
-      //           mainAxisAlignment: MainAxisAlignment.center,
-      //           children: [
-      //             Text(
-      //               '2',
-      //               textAlign: TextAlign.center,
-      //               style: GlobalFunctions.textTheme(context: context)
-      //                   .headline3!
-      //                   .copyWith(
-      //                     color: Colors.white,
-      //                     fontSize: 20,
-      //                   ),
-      //             ),
-      //             BlocBuilder<LocationCubit, LocationState>(
-      //               builder: (context, state) {
-      //                 if (state is LocationLoading) {
-      //                   return ElevatedButton(
-      //                       onPressed: () {
-      //                         context.read<LocationCubit>().addMasterLocation();
-      //                       },
-      //                       child: const Text('End'));
-      //                 } else {
-      //                   return ElevatedButton(
-      //                       onPressed: () {
-      //                         context.read<LocationCubit>().addMasterLocation();
-      //                       },
-      //                       child: const Text('data'));
-      //                 }
-      //               },
-      //             ),
-      //             // ButtonMenu(
-      //             //   title: 'Attendance',
-      //             //   icon: Icons.check,
-      //             //   routeName: Routes.ATTENDANCE_PAGE,
-      //             // ),
-      //           ],
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      // ),
       body: _child,
     );
   }
@@ -163,6 +87,7 @@ class ButtonMenu extends StatelessWidget {
     required this.icon,
     required this.routeName,
   }) : super(key: key);
+  final globalFunction = locator<GlobalFunctions>();
 
   @override
   Widget build(BuildContext context) {
@@ -190,7 +115,8 @@ class ButtonMenu extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GlobalFunctions.textTheme(context: context)
+              style: globalFunction
+                  .textTheme(context: context)
                   .headline3!
                   .copyWith(color: Colors.black, fontSize: 15),
             ),

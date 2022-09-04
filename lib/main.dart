@@ -1,5 +1,6 @@
 import 'package:attendance/injection.dart';
 import 'package:attendance/presentation/cubit/attendance_cubit/attendance_cubit.dart';
+import 'package:attendance/presentation/cubit/list_attendance_cubit/list_attendance_cubit.dart';
 import 'package:attendance/presentation/cubit/location_cubit/location_cubit.dart';
 import 'package:attendance/presentation/pages/attendance_page.dart';
 import 'package:attendance/presentation/pages/home_page.dart';
@@ -11,6 +12,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:attendance/services/location_services.dart';
+import 'package:attendance/services/firestore_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,16 +25,23 @@ void main() async {
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
   final locationServices = locator<LocationServices>();
+  final firebaseServices = locator<FirebaseServices>();
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => LocationCubit(),
+          create: (context) =>
+              LocationCubit(firebaseServices, locationServices),
           child: Container(),
         ),
         BlocProvider(
-          create: (context) => AttendanceCubit(locationServices),
+          create: (context) =>
+              AttendanceCubit(locationServices, firebaseServices),
+          child: Container(),
+        ),
+        BlocProvider(
+          create: (context) => ListAttendanceCubit(firebaseServices),
           child: Container(),
         ),
       ],
