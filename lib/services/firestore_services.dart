@@ -20,7 +20,6 @@ class FirebaseServices {
         .catchError(
       (e) {
         isSucces = false;
-        print(e);
       },
     );
 

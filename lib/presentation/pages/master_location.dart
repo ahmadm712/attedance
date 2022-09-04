@@ -1,15 +1,10 @@
 import 'package:attendance/data/models/offices_model.dart';
 import 'package:attendance/injection.dart';
-import 'package:attendance/presentation/cubit/list_attendance_cubit/list_attendance_cubit.dart';
 import 'package:attendance/presentation/cubit/location_cubit/location_cubit.dart';
-import 'package:attendance/services/location_services.dart';
 import 'package:attendance/utils/global_functions.dart';
 import 'package:attendance/utils/style.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 
 class MasterLocationPage extends StatefulWidget {
   const MasterLocationPage({Key? key}) : super(key: key);
@@ -19,13 +14,9 @@ class MasterLocationPage extends StatefulWidget {
 }
 
 class _MasterLocationPageState extends State<MasterLocationPage> {
-  Position? _currentPosition;
-
-  String? _currentAddress;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController(text: '');
 
-  late Placemark place;
   @override
   void dispose() {
     super.dispose();
@@ -45,7 +36,8 @@ class _MasterLocationPageState extends State<MasterLocationPage> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text("Location"),
+            title: const Text("Office"),
+            elevation: 0,
           ),
           floatingActionButton: SizedBox(
             child: ElevatedButton(
@@ -215,7 +207,7 @@ class _MasterLocationPageState extends State<MasterLocationPage> {
                         );
                       });
                 },
-                child: const Text('Add Location')),
+                child: const Text('Add Office Data')),
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(24),

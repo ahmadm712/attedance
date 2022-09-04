@@ -6,17 +6,12 @@ import 'package:attendance/injection.dart';
 import 'package:attendance/presentation/cubit/attendance_cubit/attendance_cubit.dart';
 import 'package:attendance/presentation/cubit/list_attendance_cubit/list_attendance_cubit.dart';
 import 'package:attendance/presentation/cubit/location_cubit/location_cubit.dart';
-import 'package:attendance/services/firestore_services.dart';
-import 'package:attendance/utils/constants.dart';
-import 'package:attendance/utils/global_functions.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:attendance/utils/style.dart';
-import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:attendance/services/location_services.dart';
+import 'package:attendance/utils/global_functions.dart';
+import 'package:attendance/utils/style.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AttendancePage extends StatefulWidget {
   const AttendancePage({Key? key}) : super(key: key);
@@ -26,63 +21,7 @@ class AttendancePage extends StatefulWidget {
 }
 
 class _AttendancePageState extends State<AttendancePage> {
-  Position? _currentPosition;
-  late Placemark place;
-  String? _currentAddress;
-  double distanceMetervalue = 0;
-  final _nameController = TextEditingController(text: '');
-
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final locationServices = locator<LocationServices>();
-
-  Future<double> distanceMeter() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var distanceInMeters = Geolocator.distanceBetween(
-      prefs.getDouble(COMPANY_LATITUDE) != null
-          ? prefs.getDouble(COMPANY_LATITUDE)!
-          : 0,
-      prefs.getDouble(COMPANY_LONGITUDE) != null
-          ? prefs.getDouble(COMPANY_LONGITUDE)!
-          : 0,
-      _currentPosition!.latitude,
-      _currentPosition!.longitude,
-    );
-
-    return distanceInMeters;
-  }
-
-  // Future<String> initPrefs() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  //   return prefs.getString(COMPANY_NAME).toString();
-  // }
-
-  // Future<Position> _getCurrentLocation() async {
-  //   Position position = await locationServices.determinatePosition();
-
-  //   setState(() {
-  //     _currentPosition = position;
-  //     _getAddressFromLatLng();
-  //   });
-
-  //   return position;
-  // }
-
-  // _getAddressFromLatLng() async {
-  //   try {
-  //     List<Placemark> placemarks = await placemarkFromCoordinates(
-  //         _currentPosition!.latitude, _currentPosition!.longitude);
-
-  //     place = placemarks[0];
-
-  //     setState(() {
-  //       _currentAddress =
-  //           "${place.locality}, ${place.postalCode}, ${place.country}";
-  //     });
-  //   } catch (e) {
-  //     print(e.toString());
-  //   }
-  // }
 
   @override
   void didChangeDependencies() {
@@ -108,6 +47,7 @@ class _AttendancePageState extends State<AttendancePage> {
         return Scaffold(
           appBar: AppBar(
             title: const Text("Attendance / Clock in"),
+            elevation: 0,
           ),
           floatingActionButton: const FloatingAcctionButton(),
           body: BlocBuilder<ListAttendanceCubit, ListAttendanceState>(
@@ -119,15 +59,43 @@ class _AttendancePageState extends State<AttendancePage> {
                   itemBuilder: (context, index) {
                     final attendance = stateListAttendance.data[index];
                     return ListTile(
-                      title: Text(attendance.idUser),
+                      title: Text(
+                        attendance.idUser,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
                       subtitle: Row(
                         children: [
-                          const Text('Is Pin Location ? '),
-                          Text(attendance.isWFO.toString()),
+                          const Text(
+                            'on Location  : ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                          attendance.isWFO
+                              ? Icon(
+                                  Icons.check_outlined,
+                                  color: kColorPrimary,
+                                )
+                              : Text(
+                                  attendance.isWFO.toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
                         ],
                       ),
                       trailing: Text(
-                          "${attendance.createdTime.day}/${attendance.createdTime.month}/${attendance.createdTime.year} - ${attendance.createdTime.hour}:${attendance.createdTime.second}"),
+                        "${attendance.createdTime.day}/${attendance.createdTime.month}/${attendance.createdTime.year} - ${attendance.createdTime.hour}:${attendance.createdTime.second}",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                        ),
+                      ),
                     );
                   },
                 );
@@ -193,7 +161,7 @@ class FloatingAcctionButton extends StatelessWidget {
               context.read<AttendanceCubit>().attendance(officesModel, data);
               context.read<ListAttendanceCubit>().getData();
             },
-            child: const Text('Add'),
+            child: const Text('Clock In'),
           );
         },
       ),
