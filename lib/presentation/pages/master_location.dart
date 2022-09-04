@@ -330,8 +330,15 @@ class _MasterLocationPageState extends State<MasterLocationPage> {
                   );
                 }
 
-                return const Center(
-                  child: Text('No Data'),
+                return Center(
+                  child: Text('No Office Data avaible, Try to add it',
+                      style: globalFunction
+                          .textTheme(context: context)
+                          .headline3!
+                          .copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
                 );
               },
             ),
